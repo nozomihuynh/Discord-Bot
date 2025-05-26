@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\DB\\TANLONG\\Discord-Bot\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{1C46C47D-6307-4203-8D00-DDB9141BE80C}|Discord-Bot.csproj|d:\\db\\tanlong\\discord-bot\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1C46C47D-6307-4203-8D00-DDB9141BE80C}|Discord-Bot.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1C46C47D-6307-4203-8D00-DDB9141BE80C}|Discord-Bot.csproj|d:\\db\\tanlong\\discord-bot\\config\\jsonreader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1C46C47D-6307-4203-8D00-DDB9141BE80C}|Discord-Bot.csproj|solutionrelative:config\\jsonreader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "JSONReader.cs",
+              "DocumentMoniker": "D:\\DB\\TANLONG\\Discord-Bot\\config\\JSONReader.cs",
+              "RelativeDocumentMoniker": "config\\JSONReader.cs",
+              "ToolTip": "D:\\DB\\TANLONG\\Discord-Bot\\config\\JSONReader.cs",
+              "RelativeToolTip": "config\\JSONReader.cs",
+              "ViewState": "AQIAAA4AAAAAAAAAAAA3wA0AAAAqAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-26T08:41:21.71Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\DB\\TANLONG\\Discord-Bot\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\DB\\TANLONG\\Discord-Bot\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AQIAAAEAAAAAAAAAAAAiwCUAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-26T08:04:15.094Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
