@@ -1,18 +1,10 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\DB\\TANLONG\\Discord-Bot\\Discord-Bot\\",
+  "WorkspaceRootPath": "D:\\DB\\Discord-Bot\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1C46C47D-6307-4203-8D00-DDB9141BE80C}|Discord-Bot.csproj|d:\\db\\tanlong\\discord-bot\\discord-bot\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1C46C47D-6307-4203-8D00-DDB9141BE80C}|Discord-Bot.csproj|d:\\db\\discord-bot\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1C46C47D-6307-4203-8D00-DDB9141BE80C}|Discord-Bot.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1C46C47D-6307-4203-8D00-DDB9141BE80C}|Discord-Bot.csproj|D:\\DB\\TANLONG\\Discord-Bot\\Discord-Bot\\config\\jsonreader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1C46C47D-6307-4203-8D00-DDB9141BE80C}|Discord-Bot.csproj|solutionrelative:config\\jsonreader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1C46C47D-6307-4203-8D00-DDB9141BE80C}|Discord-Bot.csproj|d:\\db\\tanlong\\discord-bot\\discord-bot\\config\\config.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{1C46C47D-6307-4203-8D00-DDB9141BE80C}|Discord-Bot.csproj|solutionrelative:config\\config.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,43 +14,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "config.json",
-              "DocumentMoniker": "D:\\DB\\TANLONG\\Discord-Bot\\Discord-Bot\\config\\config.json",
-              "RelativeDocumentMoniker": "config\\config.json",
-              "ToolTip": "D:\\DB\\TANLONG\\Discord-Bot\\Discord-Bot\\config\\config.json",
-              "RelativeToolTip": "config\\config.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-05-27T07:50:03.086Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "JSONReader.cs",
-              "DocumentMoniker": "D:\\DB\\TANLONG\\Discord-Bot\\Discord-Bot\\config\\JSONReader.cs",
-              "RelativeDocumentMoniker": "config\\JSONReader.cs",
-              "ToolTip": "D:\\DB\\TANLONG\\Discord-Bot\\Discord-Bot\\config\\JSONReader.cs",
-              "RelativeToolTip": "config\\JSONReader.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB0AAAAtAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-26T08:41:21.71Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Program.cs",
-              "DocumentMoniker": "D:\\DB\\TANLONG\\Discord-Bot\\Discord-Bot\\Program.cs",
+              "DocumentMoniker": "D:\\DB\\Discord-Bot\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "D:\\DB\\TANLONG\\Discord-Bot\\Discord-Bot\\Program.cs",
+              "ToolTip": "D:\\DB\\Discord-Bot\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AQIAACQAAAAAAAAAAAAowD8AAAAAAAAA",
+              "ViewState": "AgIAACUBAAAAAAAAAAAwwCoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-26T08:04:15.094Z",
               "EditorCaption": ""

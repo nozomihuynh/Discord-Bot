@@ -25,11 +25,11 @@ namespace Discord_Bot.config
                 this.conn = data.conn;
             }
         }
-        internal sealed class JSONStructure
-        {
-            public string token { get; set; }
-            public string prefix { get; set; }
-            public string conn { get; set; }
-        }
+    }
+    public class JSONStructure
+    {
+        public string token { get; set; }
+        public string prefix { get; set; }
+        public string conn { get; set; }
     }
 }
