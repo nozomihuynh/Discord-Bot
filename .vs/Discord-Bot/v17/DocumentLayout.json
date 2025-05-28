@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\DB\\Discord-Bot\\",
+  "WorkspaceRootPath": "D:\\DB\\TANLONG\\Discord-Bot\\Discord-Bot\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1C46C47D-6307-4203-8D00-DDB9141BE80C}|Discord-Bot.csproj|d:\\db\\discord-bot\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{1C46C47D-6307-4203-8D00-DDB9141BE80C}|Discord-Bot.csproj|d:\\db\\tanlong\\discord-bot\\discord-bot\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1C46C47D-6307-4203-8D00-DDB9141BE80C}|Discord-Bot.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -20,11 +20,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Program.cs",
-              "DocumentMoniker": "D:\\DB\\Discord-Bot\\Program.cs",
+              "DocumentMoniker": "D:\\DB\\TANLONG\\Discord-Bot\\Discord-Bot\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "D:\\DB\\Discord-Bot\\Program.cs",
+              "ToolTip": "D:\\DB\\TANLONG\\Discord-Bot\\Discord-Bot\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAACUBAAAAAAAAAAAwwCoAAAAAAAAAAAAAAA==",
+              "ViewState": "AQIAANoAAAAAAAAAAAAYwO4AAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-26T08:04:15.094Z",
               "EditorCaption": ""
