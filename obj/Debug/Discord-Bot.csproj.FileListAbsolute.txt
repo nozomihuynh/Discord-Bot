@@ -82,7 +82,6 @@ D:\DB\Discord-Bot\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
 D:\DB\Discord-Bot\bin\Debug\System.Threading.Channels.xml
 D:\DB\Discord-Bot\bin\Debug\System.Threading.Tasks.Extensions.xml
 D:\DB\Discord-Bot\obj\Debug\Discord-Bot.csproj.AssemblyReference.cache
-D:\DB\Discord-Bot\obj\Debug\Discord-Bot.exe.config
 D:\DB\Discord-Bot\obj\Debug\Discord-Bot.csproj.CoreCompileInputs.cache
 D:\DB\Discord-Bot\obj\Debug\Discord-.575B4F48.Up2Date
 D:\DB\Discord-Bot\obj\Debug\Discord-Bot.exe
