@@ -5,6 +5,8 @@ using DSharpPlus.Entities;
 
 //using System;
 using DSharpPlus.EventArgs;
+using DSharpPlus.Interactivity;
+using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.Net;
 using Newtonsoft.Json;
 using System;
@@ -18,12 +20,14 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
+
 namespace Discord_Bot
 {
     internal class Program
     {
         private static DiscordClient Client { get; set; }
         private static CommandsNextExtension Commands { get; set; }
+
         static async Task Main(string[] args)
         {
             var jsonReader = new JSONReader();
@@ -36,11 +40,15 @@ namespace Discord_Bot
                 TokenType = TokenType.Bot,
                 AutoReconnect = true
             };
+            
             connSV1 = jsonReader.conn;
             Client = new DiscordClient(discordConfig);
             Client.Ready += Client_Ready;
             Client.MessageCreated += OnMessageCreated;
-
+            Client.UseInteractivity(new InteractivityConfiguration
+            {
+                Timeout = TimeSpan.FromSeconds(30)
+            });
             await Client.ConnectAsync();
             await Task.Delay(-1);   //Assure bot stay online as long as program is on
 
@@ -49,13 +57,15 @@ namespace Discord_Bot
         public static readonly ulong generalchat_id = 1376470323867684906;
         public static readonly ulong order_approval = 1376483154172448778;
         public static readonly ulong testing_zone = 1377083562125430915;
+
         private static async Task OnMessageCreated(DiscordClient client, MessageCreateEventArgs e)
         {
             if (e.Author.IsBot || string.IsNullOrWhiteSpace(e.Message.Content))
                 return;
             string content = e.Message.Content.Trim();
             var member = await e.Guild.GetMemberAsync(e.Author.Id);
-            //string displayName = string.IsNullOrWhiteSpace(member.Nickname) ? member.Username : member.Nickname;
+
+            string displayName = string.IsNullOrWhiteSpace(member.Nickname) ? member.Username : member.Nickname;
             //string UserName = $"{displayName}#{e.Author.Discriminator}"; //hiển thị reneon369#0 thay vì Ren
             //string UserName = displayName; // or e.Author.Username if you prefer global hiển thị reneon369
             //string UserName = member.Nickname ?? member.Username; sẽ gây lỗi nếu code như hiện tại (check DiscordID trong DMNhanvien
@@ -67,7 +77,7 @@ namespace Discord_Bot
                 await Task.Delay(500);
                 return;
             }
-
+            string normalized = content.Trim().ToLower();
             if (e.Channel.Id == order_approval || e.Channel.Id == testing_zone)
             {
                 if (content.StartsWith("!start", StringComparison.OrdinalIgnoreCase) || content.StartsWith("!help", StringComparison.OrdinalIgnoreCase))
@@ -78,37 +88,37 @@ namespace Discord_Bot
                 else if (content.StartsWith("DH", StringComparison.OrdinalIgnoreCase))
                 {
                     ArrayList orderCodes = GetUniqueOrderCodes(content);
-                    await ProcessDuyetDHCommand_TanLong(e.Channel, orderCodes, UserName);
+                    await ProcessDuyetDHCommand_TanLong(e.Channel, orderCodes, UserName, displayName);
                     await Task.Delay(500);
                 }
                 else if (content.StartsWith("BG", StringComparison.OrdinalIgnoreCase))
                 {
                     ArrayList orderCodes = GetUniqueOrderCodes(content);
-                    await ProcessDuyetBGCommand_TanLong(e.Channel, orderCodes, UserName);
+                    await ProcessDuyetBGCommand_TanLong(e.Channel, orderCodes, UserName, displayName);
                     await Task.Delay(500);
                 }
                 else if (content.StartsWith("GBG", StringComparison.OrdinalIgnoreCase))
                 {
                     ArrayList orderCodes = GetUniqueOrderCodes(content);
-                    await ExtendQuotationCommand_TanLong(e.Channel, orderCodes, UserName);
+                    await ExtendQuotationCommand_TanLong(e.Channel, orderCodes, UserName, displayName);
                     await Task.Delay(500);
                 }
                 else if (content.StartsWith("HUY", StringComparison.OrdinalIgnoreCase))
                 {
                     ArrayList orderCodes = GetUniqueOrderCodes(content);
-                    await ProcessHuyDuyetDHCommand_TanLong(e.Channel, orderCodes, UserName);
+                    await ProcessHuyDuyetDHCommand_TanLong(e.Channel, orderCodes, UserName, displayName);
                     await Task.Delay(500);
                 }
                 else if (content.StartsWith("KH", StringComparison.OrdinalIgnoreCase))
                 {
                     ArrayList orderCodes = GetUniqueOrderCodes(content);
-                    await ProcessRESETKHCommand_TanLong(e.Channel, orderCodes, UserName);
+                    await ProcessRESETKHCommand_TanLong(e.Channel, orderCodes, UserName, displayName);
                     await Task.Delay(500);
                 }
                 else if (content.StartsWith("XOA", StringComparison.OrdinalIgnoreCase))
                 {
                     ArrayList orderCodes = GetUniqueOrderCodes(content);
-                    await ProcessXoaLSXCommand_TanLong(e.Channel, orderCodes, UserName);
+                    await ProcessXoaLSXCommand_TanLong(e.Channel, orderCodes, UserName, displayName);
                     await Task.Delay(500);
                 }
                 else if (content.StartsWith("KC", StringComparison.OrdinalIgnoreCase))
@@ -125,6 +135,10 @@ namespace Discord_Bot
                         await Task.Delay(2000);
                         await (await msg).DeleteAsync(); // Auto delete confirmation
                     });
+                }
+                else if (normalized == "y" || normalized == "n" || normalized == "yes" || normalized == "no")
+                {
+                    return;
                 }
                 else
                 {
@@ -156,7 +170,7 @@ namespace Discord_Bot
             string message =
                 "Bot hỗ trợ các cú pháp sau:\n" +
                 "1. Duyệt đơn hàng: `DH*DH-0010-0523`\n" +
-                "2. Duyệt báo giá: `BG*BG-0123-0523`\n" +
+                "2. Duyệt báo giá: `BG*BG-0123-0523` - hiện đang lỗi\n" +
                 "3. Gia hạn báo giá (thêm 2 tháng): `GBG*BG-0123-0523`\n" +
                 "4. Hủy duyệt đơn hàng: `HUY*DH-0123-0523`\n" +
                 "5. Reset đẩy KHSX: `RES*KH-0123-0523`\n" +
@@ -194,7 +208,7 @@ namespace Discord_Bot
             }
             return orderCodes;
         }
-        private static async Task ProcessDuyetDHCommand_TanLong(DiscordChannel channel, ArrayList orderCodes, string userName)
+        private static async Task ProcessDuyetDHCommand_TanLong(DiscordChannel channel, ArrayList orderCodes, string userName, string displayName)
         {
             //ArrayList orderCodes = GetUniqueOrderCodes(command);
             List<string> responses = new List<string>();
@@ -211,32 +225,32 @@ namespace Discord_Bot
                     string result = ApproveOrderQuery_TanLong(code, userName);
                     if (result == "OK")
                     {
-                        responses.Add($"{userName} đề nghị đơn hàng {code} đã được duyệt.");
+                        responses.Add($"{displayName} đề nghị đơn hàng {code} đã được duyệt.");
                         errcode.Add($"{userName} request for {code} OK");
                     }
                     else if (result == "ODR_NOT_EXIST")
                     {
-                        responses.Add($"{userName} đề nghị duyệt đơn hàng {code} không tồn tại.");
+                        responses.Add($"{displayName} đề nghị duyệt đơn hàng {code} không tồn tại.");
                         errcode.Add($"{userName} request for {code} error 404: not exist");
                     }
                     else if (result == "APPROVAL_NOT_OPEN")
                     {
-                        responses.Add($"Chưa mở duyệt đơn hàng {code} mà {userName} đề nghị, vui lòng liên hệ admin.");
+                        responses.Add($"Chưa mở duyệt đơn hàng {code} mà {displayName} đề nghị, vui lòng liên hệ admin.");
                         errcode.Add($"{userName} request for {code} error 401: not open");
                     }
                     else if (result == "APPROVAL_CLOSED")
                     {
-                        responses.Add($"Đã khóa duyệt đơn hàng {code} mà {userName} đề nghị, vui lòng liên hệ admin.");
+                        responses.Add($"Đã khóa duyệt đơn hàng {code} mà {displayName} đề nghị, vui lòng liên hệ admin.");
                         errcode.Add($"{userName} request for {code} error 402: closed");
                     }
                     else if (result == "DISCORD_ID_NOT_FOUND")
                     {
-                        responses.Add($"Không tìm thấy Discord ID của {userName} trong MYPACKSOFT, vui lòng liên hệ admin.");
+                        responses.Add($"Không tìm thấy Discord ID của {displayName} trong MYPACKSOFT, vui lòng liên hệ admin.");
                         errcode.Add($"{userName} request for {code} error 403: discord id not found");
                     }
                     else
                     {
-                        responses.Add($"Đề nghị duyệt đơn hàng {code} của {userName} bị lỗi: {result}");
+                        responses.Add($"Đề nghị duyệt đơn hàng {code} của {displayName} bị lỗi: {result}");
                         errcode.Add($"{userName} request for {code} error 403: unknown error");
                     }
                 }
@@ -325,22 +339,22 @@ namespace Discord_Bot
                 }
 
         }
-        private static async Task ExtendQuotationCommand_TanLong(DiscordChannel channel, ArrayList quotationCodes, string userName)
+        private static async Task ExtendQuotationCommand_TanLong(DiscordChannel channel, ArrayList quotationCodes, string userName, string displayName)
         {
             //ArrayList orderCodes = GetUniqueOrderCodes(command);
             List<string> responses = new List<string>();
             List<string> errcode = new List<string>();
             foreach (string code in quotationCodes)
             {
-                string result = ExtendQuotationProcedure_TanLong(code, userName);
+                string result = ExtendQuotationProcedure_TanLong(code, userName, displayName);
                 if (result == "OK")
                 {
-                    responses.Add($"Báo giá {code} đã gia hạn thêm 2 tháng bởi {userName}.");
+                    responses.Add($"Báo giá {code} đã gia hạn thêm 2 tháng bởi {displayName}.");
                     errcode.Add($"{userName} extend request for {code} OK");
                 }
                 else
                 {
-                    responses.Add($"Báo giá {code} được {userName} đề nghị bị lỗi.");
+                    responses.Add($"Báo giá {code} được {displayName} đề nghị bị lỗi.");
                     errcode.Add($"{userName} request for {code} error 403: unknown");
                 }
             }
@@ -349,7 +363,7 @@ namespace Discord_Bot
             string combinedMessage = string.Join("\n", responses);
             await channel.SendMessageAsync(combinedMessage);
         }
-        private static string ExtendQuotationProcedure_TanLong(string quotationCode,string userName)
+        private static string ExtendQuotationProcedure_TanLong(string quotationCode,string userName, string displayName)
         {
         try
                 {
@@ -381,37 +395,40 @@ namespace Discord_Bot
                     return $"Error: {ex.Message}";
                 }
         }
-        private static async Task ProcessDuyetBGCommand_TanLong(DiscordChannel channel, ArrayList orderCodes, string userName)
+        private static async Task ProcessDuyetBGCommand_TanLong(DiscordChannel channel, ArrayList orderCodes, string userName, string displayName)
         {
             List<string> responses = new List<string>();
             List<string> errcode = new List<string>();
+            var interactivity = Client.GetInteractivity();
+
             foreach (string code in orderCodes)
             {
-                if (CheckQuotationApproval_TanLong(code) == "1")
-                {
-                    responses.Add($"Báo giá {code} đã tạo đơn hàng, không hủy được.");
-                    errcode.Add($"{userName} request for {code} error 411: already listed");
-                    return;
-                }
-                else if (CheckQuotationApproval_TanLong(code) == "2") //hủy duyệt
-                {
+                if (CheckQuotationApproval_TanLong(code))
+                {   //hủy duyệt
+                    await channel.SendMessageAsync($"{userName}, bạn có chắc chắn muốn **hủy duyệt báo giá {code}** không? Trả lời `Y/N` để xác nhận.");
+                    var confirmation = await interactivity.WaitForMessageAsync(
+                        m => m.Author.Username == userName && m.ChannelId == channel.Id,
+                        TimeSpan.FromSeconds(15)
+                        );
+                    var accepted = new HashSet<string> { "y", "yes" };
+                    string input = confirmation.Result.Content.Trim().ToLower();
+
+                    if (confirmation.TimedOut || !accepted.Contains(input))
+                    {
+                        responses.Add($"❌ Hủy duyệt báo giá {code} đã bị hủy bỏ.");
+                        errcode.Add($"{userName} request for {code} UNAPPROVAL: CANCELED");
+                        continue;
+                    }
+
                     UnapproveQuotation_TanLong(code);
-                    responses.Add($"Báo giá {code} đã được hủy.");
+                    responses.Add($"Báo giá {code} đã được {displayName} hủy.");
                     errcode.Add($"{userName} request for {code} UNAPPROVAL: OK");
-                    return;
                 }
-                else if (CheckQuotationApproval_TanLong(code) == "3")   //duyệt
+                else //duyệt
                 {
                     ApproveQuotation_TanLong(code);
-                    responses.Add($"Báo giá {code} đã được duyệt.");
-                    errcode.Add($"{userName} request for {code} APPROVAL: OK");
-                    return;
-                }
-                else
-                {
-                    responses.Add($"Đề nghị duyệt báo giá {code} của {userName} bị lỗi.");
-                    errcode.Add($"{userName} request for {code} error 414: unknown error.");
-                    return;
+                    responses.Add($"Báo giá {code} đã được {displayName} duyệt.");
+                    errcode.Add($"{userName} request for {code}: OK");
                 }
             }
             string errmessage = string.Join("\n", errcode);
@@ -420,7 +437,7 @@ namespace Discord_Bot
             await channel.SendMessageAsync(combinedMessage);
         }
 
-        private static async Task ProcessHuyDuyetDHCommand_TanLong(DiscordChannel channel, ArrayList orderCodes, string userName)
+        private static async Task ProcessHuyDuyetDHCommand_TanLong(DiscordChannel channel, ArrayList orderCodes, string userName, string displayName)
         {
             //ArrayList orderCodes = GetUniqueOrderCodes(command);
             List<string> responses = new List<string>();
@@ -430,22 +447,22 @@ namespace Discord_Bot
                 string result  = CancelApprovalOrder(code);
                 if (result == "WBLPS_DATA_EXIST")
                 {
-                    responses.Add($"Đơn hàng {code} đã hủy duyệt bởi {userName} lỗi do đã nhập phôi sóng");
+                    responses.Add($"Đơn hàng {code} đã hủy duyệt bởi {displayName} lỗi do đã nhập phôi sóng");
                     errcode.Add($"{userName} request cancellation for {code} error 421: {result}");
                 }
                 else if (result == "DTKH_DATA_EXIST")
                 {
-                    responses.Add($"Đơn hàng {code} đã hủy duyệt bởi {userName} lỗi do đã lập KHSX");
+                    responses.Add($"Đơn hàng {code} đã hủy duyệt bởi {displayName} lỗi do đã lập KHSX");
                     errcode.Add($"{userName} request cancellation for {code} error 422: {result}");
                 }
                 else if (result == "OK")
                 {
-                    responses.Add($"Đơn hàng {code} đã hủy duyệt bởi {userName} thành công");
+                    responses.Add($"Đơn hàng {code} đã hủy duyệt bởi {displayName} thành công");
                     errcode.Add($"{userName} request cancellation for {code}: OK!!");
                 }
                 else
                 {
-                    responses.Add($"Đề nghị hủy duyệt {code} của {userName} thất bại do lỗi");
+                    responses.Add($"Đề nghị hủy duyệt {code} của {displayName} thất bại do lỗi");
                     errcode.Add($"{userName} request cancellation for {code} 423: unknown");
                 }
             }
@@ -454,36 +471,26 @@ namespace Discord_Bot
             string combinedMessage = string.Join("\n", responses);
             await channel.SendMessageAsync(combinedMessage);
         }
-        private static string CheckQuotationApproval_TanLong(string quotationCode)
+        private static bool CheckQuotationApproval_TanLong(string quotationCode)
         {
             // Execute the query to check if the quotation is approved
             // Return true if approved, false otherwise
             try
+            {
+                using (SqlConnection connection = new SqlConnection(connSV1))
                 {
-                    using (SqlConnection connection = new SqlConnection(connSV1))
-                    {
-                        connection.Open();
-                        SqlCommand command = new SqlCommand("SELECT Duyet FROM MTBaoGia WHERE SoBG = @QuotationCode", connection);
-                        SqlCommand command2 = new SqlCommand("SELECT Duyet FROM MTDonHang WHERE TuBG = @QuotationCode", connection);
-                        command.Parameters.AddWithValue("@QuotationCode", quotationCode);
-                        command2.Parameters.AddWithValue("@QuotationCode", quotationCode);
-                        object result = command.ExecuteScalar();
-                        object result2 = command2.ExecuteScalar();
-                        bool val1 = result != null && (bool)result;
-                        bool val2 = result2 != null && (bool)result2;
-                        if (val1 && val2)
-                            return("1");
-                        else if (val1 && !val2)
-                            return("2");
-                        else
-                            return("3");
+                    connection.Open();
+                    SqlCommand command = new SqlCommand("SELECT Duyet FROM MTBaoGia WHERE SoBG = @QuotationCode", connection);
+                    command.Parameters.AddWithValue("@QuotationCode", quotationCode);
+                    object result = command.ExecuteScalar();
+                    return result != null && (bool)result;
                 }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error: {ex.Message}");
-                    return("4");
-                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return false;
+            }
 
         }
         
@@ -622,7 +629,7 @@ namespace Discord_Bot
                 return ex.Message;
             }
         }
-        private static async Task ProcessRESETKHCommand_TanLong(DiscordChannel channel, ArrayList orderCodes, string userName)
+        private static async Task ProcessRESETKHCommand_TanLong(DiscordChannel channel, ArrayList orderCodes, string userName, string displayName)
         {
             List<string> responses = new List<string>();
             List<string> errcode = new List<string>();
@@ -633,18 +640,18 @@ namespace Discord_Bot
                     string result = RESETKHSX_TanLong(code);
                     if (result == "OK")
                     {
-                        responses.Add($"KHSX {code} đã reset bởi {userName}");
+                        responses.Add($"KHSX {code} đã reset bởi {displayName}");
                         errcode.Add($"{userName} reset request for {code}: OK!!");
                     }
                     else if (result == "Error")
                     {
-                        responses.Add($"KHSX {code} đề nghị bởi {userName} reset thất bại do chưa chuyển file");
+                        responses.Add($"KHSX {code} đề nghị bởi {displayName} reset thất bại do chưa chuyển file");
                         errcode.Add($"{userName} reset request for {code} 431: Not yet Uploaded");
                     }
                 }
                 else
                 {
-                    responses.Add($"KHSX {code} đề nghị bởi {userName} reset thất bại do lỗi");
+                    responses.Add($"KHSX {code} đề nghị bởi {displayName} reset thất bại do lỗi");
                     errcode.Add($"{userName} reset request for {code} 432: unknown");
                 }
             }
@@ -703,7 +710,7 @@ namespace Discord_Bot
                 return ex.Message;
             }
         }
-        private static async Task ProcessXoaLSXCommand_TanLong(DiscordChannel channel, ArrayList orderCodes, string userName)
+        private static async Task ProcessXoaLSXCommand_TanLong(DiscordChannel channel, ArrayList orderCodes, string userName, string displayName)
         {
             List<string> responses = new List<string>();
             List<string> errcode = new List<string>();
@@ -714,12 +721,12 @@ namespace Discord_Bot
                     string result = DELETELSX_TanLong(code);
                     if (result == "OK")
                     {
-                        responses.Add($"{code} đã xoá thành công bởi {userName}");
+                        responses.Add($"{code} đã xoá thành công bởi {displayName}");
                         errcode.Add($"{userName} delete request for {code}: OK!!");
                     }
                     else if (result == "Error")
                     {
-                        responses.Add($"{code} đề nghị xoá bởi {userName} thất bại do đã tồn tại trong bảng cân đối");
+                        responses.Add($"{code} đề nghị xoá bởi {displayName} thất bại do đã tồn tại trong bảng cân đối");
                         errcode.Add($"{userName} delete request for {code} error code 441: exist in blvt or wblps");
                     }
                     else if (result == "No Data")
@@ -727,10 +734,15 @@ namespace Discord_Bot
                         responses.Add($"{code} đề nghị xoá bởi {userName} thất bại do không có dữ liệu");
                         errcode.Add($"{userName} delete request for {code} error code 442: no data");
                     }
+                    else if (result == "Error404")
+                    {
+                        responses.Add($"{code} đề nghị xoá bởi {displayName} thất bại do không xóa được dữ liệu trong 4 bảng");
+                        errcode.Add($"{userName} delete request for {code} error code 443: did not delete in all 4 table");
+                    }
                 }
                 else
                 {
-                    responses.Add($"{code} yêu cầu xoá bởi {userName} thất bại do lỗi");
+                    responses.Add($"{code} yêu cầu xoá bởi {displayName} thất bại do lỗi");
                     errcode.Add($"{userName} delete request for {code} error code 442: unknown");
                 }
             }
@@ -765,24 +777,55 @@ namespace Discord_Bot
 
                     if (string.IsNullOrEmpty(dtdhid))
                         return "No Data";
+                    SqlCommand getMTDHID = new SqlCommand(@"SELECT MTDHID FROM DTDONHANG WHERE DTDHID = @dtdhid", connection);
+                    getMTDHID.Parameters.AddWithValue("@dtdhid", dtdhid);
+                    string mtdhid = getMTDHID.ExecuteScalar()?.ToString();
+                    if (string.IsNullOrEmpty(mtdhid))
+                        return "No Data";
 
                     int rowCount = checkRowCount(orderCode, mtlsxid);
                     if (rowCount < 1)
                         return "No Data";
                     else if (rowCount == 1)
                     {
-                        SqlCommand delAll = new SqlCommand(@"
-                                                            DELETE FROM DTLSX WHERE DTDHID = @dtdhid;
-                                                            DELETE FROM MTLSX WHERE MTLSXID = (SELECT MTLSXID FROM DTLSX WHERE DTDHID = @dtdhid);
-                                                            DELETE FROM DTDonhang WHERE DTDHID = @dtdhid;
-                                                            DELETE FROM DTDonhang WHERE MTDHID = (SELECT MTDHID FROM DTDonhang WHERE DTDHID = @dtdhid);
-                                                            ", connection);
+                        using (SqlTransaction transaction = connection.BeginTransaction())
+                        { try
+                            {
+                                SqlCommand dellsx = new SqlCommand("DELETE FROM DTLSX WHERE DTDHID = @dtdhid", connection, transaction);
+                                SqlCommand delmtlsx = new SqlCommand("DELETE FROM MTLSX WHERE MTLSXID = @mtlsxid", connection, transaction);
+                                SqlCommand deldh = new SqlCommand("DELETE FROM DTDonhang WHERE DTDHID = @dtdhid", connection, transaction);
+                                SqlCommand delmtdh = new SqlCommand("DELETE FROM MTDonhang WHERE MTDHID = @mtdhid", connection, transaction);
+                                dellsx.Parameters.AddWithValue("@dtdhid", dtdhid);
+                                delmtlsx.Parameters.AddWithValue("@mtlsxid", mtlsxid);
+                                deldh.Parameters.AddWithValue("@dtdhid", dtdhid);
+                                delmtdh.Parameters.AddWithValue("@mtdhid", mtdhid);
 
-                        delAll.Parameters.AddWithValue("@dtdhid", dtdhid);
-                        delAll.Parameters.AddWithValue("@mtlsxid", mtlsxid);
-
-                        int rowsAffected = delAll.ExecuteNonQuery();
-                        return rowsAffected > 0 ? "OK" : "Error";
+                                int r1 = dellsx.ExecuteNonQuery();
+                                int r2 = delmtlsx.ExecuteNonQuery();
+                                int r3 = deldh.ExecuteNonQuery();
+                                int r4 = delmtdh.ExecuteNonQuery();
+                                Console.WriteLine(r1);
+                                Console.WriteLine(r2);
+                                Console.WriteLine(r3);
+                                Console.WriteLine(r4);
+                                if (r1 > 0 && r2 > 0 && r3 > 0 && r4 > 0)
+                                {
+                                    transaction.Commit();
+                                    return "OK";
+                                }
+                                else
+                                {
+                                    transaction.Rollback();
+                                    return "Error404";
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                transaction.Rollback();
+                                Console.WriteLine("Transaction failed: " + ex.Message);
+                                return "Error";
+                            }
+                        } 
                     }
                     else if (rowCount > 1)
                     {
