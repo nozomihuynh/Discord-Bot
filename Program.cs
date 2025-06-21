@@ -29,8 +29,20 @@ namespace Discord_Bot
         private static DiscordClient Client { get; set; }
         private static CommandsNextExtension Commands { get; set; }
 
+        static Mutex mutex = null;
         static async Task Main(string[] args)
         {
+            // ---- check for two instances ----
+            const string appName = "DiscordBot_TanLong_Mutex";
+            bool createdNew;
+            mutex = new Mutex(true, appName, out createdNew);
+
+            if (!createdNew)
+            {
+                Console.WriteLine("Another instance is already running.");
+                return;
+            }
+            // ---- original logic ----
             var jsonReader = new JSONReader();
             await jsonReader.ReadJSON();
 
