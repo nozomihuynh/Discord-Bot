@@ -10,6 +10,7 @@ using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.Net;
 using Newtonsoft.Json;
 using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -32,6 +33,25 @@ namespace Discord_Bot
         static Mutex mutex = null;
         static async Task Main(string[] args)
         {
+            string logFolder = "log";
+            string logFile = Path.Combine(logFolder, $"botlog-{DateTime.Now:yyyy-MM-dd}.txt");
+            Directory.CreateDirectory(logFolder);
+
+            // Cleanup old logs (older than 30 days)
+            try
+            {
+                var oldLogs = Directory.GetFiles(logFolder, "botlog-*.txt")
+                    .Where(file => File.GetCreationTime(file) < DateTime.Now.AddDays(-30));
+
+                foreach (var file in oldLogs)
+                {
+                    File.Delete(file);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("⚠️ Error deleting old log files: " + ex.Message);
+            }
             // ---- check for two instances ----
             const string appName = "DiscordBot_TanLong_Mutex";
             bool createdNew;
@@ -39,9 +59,11 @@ namespace Discord_Bot
 
             if (!createdNew)
             {
-                Console.WriteLine("Another instance is already running.");
+                Console.WriteLine("Another instance is already running");
+                File.AppendAllText(logFile, $"{DateTime.Now}: Another instance is already running" + Environment.NewLine);
                 return;
             }
+
             // ---- original logic ----
             var jsonReader = new JSONReader();
             await jsonReader.ReadJSON();
@@ -53,19 +75,75 @@ namespace Discord_Bot
                 TokenType = TokenType.Bot,
                 AutoReconnect = true
             };
-            
+
             connSV1 = jsonReader.conn;
             Client = new DiscordClient(discordConfig);
+
             Client.Ready += Client_Ready;
+            Client.Ready += (s, e) =>
+            {
+                string msg = $"✅ Bot is ready - {DateTime.Now}";
+                Console.WriteLine(msg);
+                File.AppendAllText(logFile, msg + Environment.NewLine);
+                return Task.CompletedTask;
+            };
+
+            Client.SocketOpened += (s, e) =>
+            {
+                string msg = $"🔌 Socket opened - {DateTime.Now}";
+                Console.WriteLine(msg);
+                File.AppendAllText(logFile, msg + Environment.NewLine);
+                return Task.CompletedTask;
+            };
+
+            Client.SocketClosed += (s, e) =>
+            {
+                string msg = $"❌ Socket closed at {DateTime.Now}. Code: {e.CloseCode}, Reason: {e.CloseMessage}";
+                Console.WriteLine(msg);
+                File.AppendAllText(logFile, msg + Environment.NewLine);
+
+                // Restart logic
+                string exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+                File.AppendAllText(logFile, $"🔁 Restarting bot at {DateTime.Now}{Environment.NewLine}");
+                System.Diagnostics.Process.Start(exePath);
+                Environment.Exit(1); // Stop current process
+                return Task.CompletedTask;
+            };
+
+            Client.SocketErrored += (s, e) =>
+            {
+                string msg = $"🔥 Socket error at {DateTime.Now}: {e.Exception.Message}";
+                Console.WriteLine(msg);
+                File.AppendAllText(logFile, msg + Environment.NewLine);
+                return Task.CompletedTask;
+            };
+
+            Client.ClientErrored += (s, e) =>
+            {
+                string msg = $"⚠️ Client error at {DateTime.Now}: {e.Exception.Message}";
+                Console.WriteLine(msg);
+                File.AppendAllText(logFile, msg + Environment.NewLine);
+                return Task.CompletedTask;
+            };
+
             Client.MessageCreated += OnMessageCreated;
+
             Client.UseInteractivity(new InteractivityConfiguration
             {
                 Timeout = TimeSpan.FromSeconds(30)
             });
-            await Client.ConnectAsync();
-            await Task.Delay(-1);   //Assure bot stay online as long as program is on
 
+            Console.WriteLine("⏳ Connecting bot...");
+            File.AppendAllText(logFile, $"⏳ Connecting bot at {DateTime.Now}{Environment.NewLine}");
+
+            await Client.ConnectAsync();
+
+            Console.WriteLine("✅ ConnectAsync awaited");
+            File.AppendAllText(logFile, $"✅ ConnectAsync awaited at {DateTime.Now}{Environment.NewLine}");
+
+            await Task.Delay(-1); // Keep alive
         }
+
         public static string connSV1;
         public static readonly ulong generalchat_id = 1376470323867684906;
         public static readonly ulong order_approval = 1376483154172448778;
