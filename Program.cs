@@ -77,7 +77,7 @@ namespace Discord_Bot
 
             if (content.StartsWith("!start", StringComparison.OrdinalIgnoreCase) || content.StartsWith("!help", StringComparison.OrdinalIgnoreCase))
             {
-                await ShowInstruction(e.Channel.Id);
+                await ShowInstruction(e.Channel.Id,UserName);
                 await Task.Delay(500);
             }
             else if (content.StartsWith("DH", StringComparison.OrdinalIgnoreCase))
@@ -130,6 +130,7 @@ namespace Discord_Bot
                     await Task.Delay(2000);
                     await (await msg).DeleteAsync();
                 });
+                Console.WriteLine($"{UserName} ask to delete 100 recent messages");
             }
             else if (normalized == "y" || normalized == "n" || normalized == "yes" || normalized == "no")
             {
@@ -177,7 +178,7 @@ namespace Discord_Bot
             {
                 if (normalized.StartsWith("!start") || normalized.StartsWith("!help"))
                 {
-                    await ShowInstruction(e.Channel.Id);
+                    await ShowInstruction(e.Channel.Id, UserName);
                     await Task.Delay(500);
                 }
                 else
@@ -194,7 +195,7 @@ namespace Discord_Bot
         {
             return content.Length <= 2000;
         }
-        private static async Task ShowInstruction(ulong channelId)
+        private static async Task ShowInstruction(ulong channelId, string userName)
         {
             var channel = await Client.GetChannelAsync(channelId);
             if (channel == null) return;
@@ -208,6 +209,7 @@ namespace Discord_Bot
                 "5. Reset đẩy KHSX: `KH*KH-0123-0523`\n" +
                 "6. Xóa LSX trong 1 đơn: `XOA*LSX-01234-0523`\n";
             // + "7. Đổi MaKC của lệnh: `KC:MãKC,LSX-01234-0523`\n"
+            Console.WriteLine($"{userName} ask to show instruction");
             await channel.SendMessageAsync(message);
         }
         private static ArrayList GetUniqueOrderCodes(string input)
@@ -467,7 +469,6 @@ namespace Discord_Bot
             string combinedMessage = string.Join("\n", responses);
             await channel.SendMessageAsync(combinedMessage);
         }
-
         private static async Task ProcessHuyDuyetDHCommand_TanLong(DiscordChannel channel, ArrayList orderCodes, string userName, string displayName)
         {
             //ArrayList orderCodes = GetUniqueOrderCodes(command);
